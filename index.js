@@ -31,14 +31,14 @@ async function getCurrencyConversions() {
             headers: { apiKey: process.env.FIXER_API_KEY },
             params: {
                 amount: "1",
-                from: "SEK",
+                from: "CAD",
                 to: "INR"
             }
         }).then((response) => {
             if (response.data.success) {
-                const sek = parseFloat(response.data.result).toFixed(2);
-                console.log(`The conversion rate for SEK today is ${sek} INR`);
-                message += `1 SEK = ${sek} INR`;
+                const cad = parseFloat(response.data.result).toFixed(2);
+                console.log(`The conversion rate for CAD today is ${cad} INR`);
+                message += `1 SEK = ${cad} INR`;
             } else {
                 console.error(response.data.error.info);
             }
