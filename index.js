@@ -1,4 +1,5 @@
 const axios = require("axios").default;
+const fs = require("fs");
 require("dotenv").config();
 
 var notify = false;
@@ -38,13 +39,35 @@ async function getCurrencyConversions() {
             if (response.data.success) {
                 const cad = parseFloat(response.data.result).toFixed(2);
                 console.log(`The conversion rate for CAD today is ${cad} INR`);
-                message += `1 SEK = ${cad} INR`;
+                message += `1 CAD = ${cad} INR`;
             } else {
                 console.error(response.data.error.info);
             }
         });
 
         sendIftttNotification(message);
+
+        let file = "currencyData.json"
+
+        let fileData = {
+            data: []
+        };
+
+        if (fs.existsSync(file)) {
+            fs.readFile(file, (err, data) => {
+                if (err) throw err;
+                fileData = JSON.parse(data);
+                fileData.data.push(message);
+                fs.writeFile(file, JSON.stringify(fileData), (err) => {
+                    if (err) throw err;
+                });
+            });
+        } else {
+            fileData.data.push(message);
+            fs.writeFile(file, JSON.stringify(fileData), (err) => {
+                if (err) throw err;
+            });
+        }
 
     } catch (error) {
         console.error(error);
@@ -67,7 +90,33 @@ async function getCryptoPrices() {
                 console.log(`The current price of BTC is ${btcPrice} USD`);
                 console.log(`The current price of LTC is ${ltcPrice} USD`);
 
+                let message = "";
+                message += `1 BTC = ${btcPrice} USD, `;
+                message += `1 LTC = ${ltcPrice} USD`;
+
                 sendIftttNotification(`1 BTC = ${btcPrice} USD, 1 LTC = ${ltcPrice} USD`);
+
+                let file = "cryptoData.json"
+
+                let fileData = {
+                    data: []
+                };
+
+                if (fs.existsSync(file)) {
+                    fs.readFile(file, (err, data) => {
+                        if (err) throw err;
+                        fileData = JSON.parse(data);
+                        fileData.data.push(message);
+                        fs.writeFile(file, JSON.stringify(fileData), (err) => {
+                            if (err) throw err;
+                        });
+                    });
+                } else {
+                    fileData.data.push(message);
+                    fs.writeFile(file, JSON.stringify(fileData), (err) => {
+                        if (err) throw err;
+                    });
+                }
 
             } else {
                 console.error(response.status.error_message);
