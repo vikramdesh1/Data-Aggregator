@@ -39,11 +39,13 @@ async function getCurrencyConversions() {
             if (response.data.success) {
                 const cad = parseFloat(response.data.result).toFixed(2);
                 console.log(`The conversion rate for CAD today is ${cad} INR`);
-                message += `1 CAD = ${cad} INR`;
+                message += `1 CAD = ${cad} INR -> `;
             } else {
                 console.error(response.data.error.info);
             }
         });
+
+        message += Date.now();
 
         sendIftttNotification(message);
 
@@ -92,7 +94,8 @@ async function getCryptoPrices() {
 
                 let message = "";
                 message += `1 BTC = ${btcPrice} USD, `;
-                message += `1 LTC = ${ltcPrice} USD`;
+                message += `1 LTC = ${ltcPrice} USD -> `;
+                message += Date.now();
 
                 sendIftttNotification(`1 BTC = ${btcPrice} USD, 1 LTC = ${ltcPrice} USD`);
 
